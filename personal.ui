@@ -73,7 +73,7 @@ border-radius: 10px;</string>
     <string>Перевести</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="signin_5">
+  <widget class="QPushButton" name="paymand">
    <property name="geometry">
     <rect>
      <x>380</x>

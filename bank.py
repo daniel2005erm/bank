@@ -16,6 +16,15 @@ class StartDB:
             balance INT
             );
         """)
+        self.connect.execute("""
+        CREATE TABLE IF NOT EXISTS uslugi(
+        woter INT,
+        gaz INT,
+        elektro INT,
+        musor INT,
+        komunalka INT
+        );
+        """)
         self.connect.commit()
 
 class SignUp(QWidget):
@@ -51,13 +60,20 @@ class SignUp(QWidget):
             else:
                 self.error.setText("Логин занят.")
         self.db.connect.commit()
-
+class Uslugi(QMainWindow):
+    def __init__(self):
+        super(Uslugi,self).__init__()
+        loadUi('uslugi.ui', self)
+    
 class Personal(QWidget):
     def __init__(self, login):
         super(Personal, self).__init__()
         self.login = login 
         loadUi('personal.ui', self)     
         self.username.setText(login)
+        self.class_per = Uslugi()
+        self.paymand.clicked.connect(self.show_uslugi)
+
         self.db = StartDB()
         self.class_cursor = self.db.connect.cursor()
         result = self.class_cursor.execute(f"SELECT balance FROM users WHERE login = '{login}';")
@@ -74,12 +90,19 @@ class Personal(QWidget):
         self.amount.hide()
         self.send.hide()
 
+    def show_uslugi(self):
+        self.class_per.show()
+
     def show_transfer(self):
         self.result.show()
         self.input_login.show()
         self.amount.show()
         self.send.show()
-
+    def kapelki(self):
+        cursor = self.db.connect.cursor()
+        cursor.execute(f"UPDATE uslugi SET woter = woter + {1};")
+        self.db.connect.commit()
+        self.update_balance()
     def update_balance(self):
         cursor = self.db.connect.cursor()
         result = cursor.execute(f"SELECT balance FROM users WHERE login = '{self.login}';")
